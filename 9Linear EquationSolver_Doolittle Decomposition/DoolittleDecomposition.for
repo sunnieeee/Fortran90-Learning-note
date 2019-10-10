@@ -23,7 +23,7 @@ program DoolittleDecomposition
 
     !!Solve L&U
     do i=1,9
-        do j=i,9
+        do j=1,9
             u(i,j)=0
             l(i,j)=0
         enddo 
@@ -63,22 +63,24 @@ program DoolittleDecomposition
         end do
         y(i) = ( b(1,i)-sum )/ l(i,i)
     end do
+    
     do i = 1,9
-        print *,  "y", i , "=",y(i)
+        print "(a,i0,a,f8.3)",  "y", i , "=",y(i)
     end do
+
     
     !!Solve x with Ux=y
-    x(9) = y(9)/u(9,9)
-    do i = 8,1
-        sum = 0
-        do j = 9,i+1
-            sum = sum + u(i,j)*x(j)
-        end do
-        x(i) = ( y(i)-sum )/ u(i,i)
+    y(9) = y(9)/u(9,9)
+    do i = 8,1,-1
+        sum = dot_product(u(i,i+1:9),y(i+1:9))
+        y(i) = y(i)-sum
+        y(i) = y(i)/ u(i,i)
     end do
+    
     do i = 1,9
-        print *,  "x", i , "=",x(i)
+        print "(a,i0,a,f8.3)",  "x", i , "=",y(i)
     end do
+
 
 
 end program DoolittleDecomposition

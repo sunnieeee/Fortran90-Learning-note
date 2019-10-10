@@ -9,6 +9,7 @@ implicit none
 	real*8 :: temp(9),Tri(10)
 	real*8 :: minval                !储存矩阵最小值，用于temp的初始化
     real*8 :: sum
+    real*8 :: tmp
 
     !**************读取矩阵****************!
 
@@ -54,16 +55,17 @@ implicit none
     	end do
     end do
 
-   	do i = 1,9
-       temp(i) = minval
-	end do
 
-   	do j = 1,9
+
+   	do j = 1,9   
    	   
-
+ 
     	!**************Exchange Column Pivot elemnet***************!
-    	 do n = j,9
-   			temp(n) = matAb(j,n)
+        do i = 1,9
+            temp(i) = minval
+         end do
+         do n = j,9
+   			temp(n) = matAb(n,j)
 	   	 end do
 		
     	 pivot = MaxLoc(temp)
@@ -77,35 +79,34 @@ implicit none
         	  matAb(j,i) = Tri(i)
         end do
         
-    	!**************Triangularization***************!
+        !**************Triangularization***************!
         if (j<9) then
-       	 do n = j+1,9
-        		 do i = 1,10
-        			matAb(n,i) = matAb(n,i) - matAb(j,i) *matAb(n,j)/matAb(j,j) 
-        		 end do 
-          	end do
+            do n = j+1,9
+                 do i = 1,10
+                    matAb(n,i) = matAb(n,i) - matAb(j,i) *matAb(n,j)/matAb(j,j) 
+                 end do 
+              end do
         end if
+
         
         
    	end do
    	
   	print "(a)", "the triangularization matrix is:"
    	print "(10f8.1)", ( matAb(i,:),i=1,9 )
-            
-   	!****************求解x*****************!
-    sum = 0
-    temp(9) = matAb(9,10)/matAb(9,9)
-    do i = 9,1
-    	do j = i+1,9
-    		sum = sum + matAb(i,j)*temp(j)
-    	end do
-    	temp(i) = ( matAb(i,10)-sum )/ matAb(i,i)
-    end do
-            
-    do i = 1,9
-    	print *,  "X", i , "=",temp(i)
-    end do
-    
+       
 
+    
+    !------------------求解x--------------
+    matAb(9,10) = matAb(9,10)/matA(9,9)
+    do i = 9-1,1,-1
+        tmp = dot_product(matA(i,i+1:9),matAb(i+1:9,10))
+        matAb(i,10) = matAb(i,10)-tmp
+        matAb(i,10) = matAb(i,10)/matA(i,i)
+    enddo
+
+    do i = 1,9
+        print "(a,i0,a,f8.3)",  "x", i , "=",matAb(i,10)
+    end do
 
 end program GE
