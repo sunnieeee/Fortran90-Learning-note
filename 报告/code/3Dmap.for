@@ -12,12 +12,13 @@ implicit none
     data y /30.0,20.0,15.0,30.0/
  
     h = 600.0    ! h=x_(i+1)-x_i
-    u = h/(h+h)
-    lambda = 1-u
+
     M(1) = 0
     M(4) = 0     !Boundary condition
 
     !********************三弯矩方程**********************!
+    u = h/(h+h)
+    lambda = 1-u
     do i = 1,2
         differ(i) = 6/(h+h) * ( (y(i+2)-y(i+1))/h-(y(i+1)-y(i))/h )
     end do
