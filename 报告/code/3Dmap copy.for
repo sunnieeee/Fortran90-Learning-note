@@ -6,7 +6,7 @@ implicit none
     real*8 :: temp
     real*8 :: spline
     
-    integer :: k
+    integer :: k,j
 
     !**********************在x轴方向上做插值************************!
     hh = 600.0    ! h=x_(i+1)-x_i
@@ -44,13 +44,31 @@ implicit none
     !**********************在y轴方向上做插值************************!
     hh = 500.0
     xx(1:4) = (/0.0,500.0,1000.0,1500.0/)
-    yy(1:4) = (/30.0,15.0,10.0,20.0/)
-    do k = 1,76
-        temp = (k-1.0)*20.0
-        matmap(1,k) = spline(xx,yy,hh,temp)
+   
+    do k = 0,90
+        yy(1:4) = (/matmap(76,k+1),matmap(51,k+1),matmap(26,k+1),matmap(1,k+1)/)
+        do j = 1,76
+            temp = (j-1.0)*20.0
+            matmap(j,k+1) = spline(xx,yy,hh,temp)
+        end do
+        !print "(76f8.3)", matmap(:,k+1)
+        !print "(a)", "-----------------------------------------------------"
     end do
-    print "(76f8.3)", matmap(1,:)
-    print "(a)", "-----------------------------------------------------"
+
+    !output to data.txt
+    open(1, file="matmap.txt",status='new')
+    do k = 1,76
+        write(1,*) matmap(k,:)
+    end do
+    close(1)
+
+    !open data.txt
+    open(file="matmap.txt",unit=10,action="read")
+    read(10,*)matmap
+    
+    !print onto the screen
+    print"(a)","matmap.txt elements:"
+    print"(5f8.3)",(matmap(k,:),k=1,5)
 
 end program map
 
